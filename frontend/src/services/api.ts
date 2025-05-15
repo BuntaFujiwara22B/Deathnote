@@ -10,13 +10,15 @@ interface Victim {
   image_url: string;
 }
 
-// Configuración de axios con tipos inferidos
 const api = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: import.meta.env.VITE_API_URL,
+
+
   headers: {
     'Content-Type': 'application/json'
   }
 });
+
 
 // Interceptor para respuestas
 api.interceptors.response.use(

@@ -9,16 +9,23 @@ import (
 )
 
 func ConnectDB() *sql.DB {
-	host := os.Getenv("DB_HOST")
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD")
-	dbname := os.Getenv("DB_NAME")
+	// 🔁 Leer configuración desde variables de entorno (definidas en docker-compose)
+	host := os.Getenv("DB_HOST")         // debe ser "postgres" (nombre del servicio en docker-compose)
+	port := os.Getenv("DB_PORT")         // "5432"
+	user := os.Getenv("DB_USER")         // "postgres"
+	password := os.Getenv("DB_PASSWORD") // "bunta"
+	dbname := os.Getenv("DB_NAME")       // "deathnote_db"
 
-	connStr := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", host, user, password, dbname)
+	connStr := fmt.Sprintf(
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname,
+	)
+
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		panic(fmt.Sprintf("❌ Error conectando a PostgreSQL: %v", err))
 	}
+
 	return db
 }
 
@@ -33,7 +40,8 @@ func InitDB(db *sql.DB) error {
       death_time TIMESTAMP,
       image_url TEXT NOT NULL,
       cause_added BOOLEAN DEFAULT FALSE,
-      details_added BOOLEAN DEFAULT FALSE
+      details_added BOOLEAN DEFAULT FALSE,
+      is_dead BOOLEAN DEFAULT FALSE
     )
   `)
 	return err
